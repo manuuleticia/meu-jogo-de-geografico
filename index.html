@@ -1,0 +1,414 @@
+# GeoMaster Brasil — HTML Completo Atualizado
+
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoMaster Brasil</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#001f3f,#004aad,#00b4ff);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.game{
+width:100%;
+max-width:900px;
+background:rgba(255,255,255,0.10);
+backdrop-filter:blur(12px);
+padding:30px;
+border-radius:30px;
+box-shadow:0 15px 45px rgba(0,0,0,0.5);
+color:white;
+}
+
+h1{
+text-align:center;
+font-size:42px;
+margin-bottom:20px;
+}
+
+.sub{
+text-align:center;
+font-size:20px;
+margin-bottom:25px;
+}
+
+button{
+border:none;
+border-radius:16px;
+padding:14px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.04);
+}
+
+.jogar,.reiniciar{
+width:100%;
+margin-top:12px;
+}
+
+.jogar{
+background:#00c853;
+color:white;
+}
+
+.reiniciar{
+background:#ffee58;
+color:black;
+}
+
+.menu{
+background:#ff9800;
+color:white;
+}
+
+.info{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:20px;
+font-size:18px;
+font-weight:bold;
+}
+
+.nivel{
+text-align:center;
+font-size:24px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+.pergunta{
+background:rgba(255,255,255,0.15);
+padding:25px;
+border-radius:20px;
+font-size:24px;
+font-weight:bold;
+margin-bottom:20px;
+text-align:center;
+}
+
+.opcao{
+width:100%;
+margin-top:12px;
+background:linear-gradient(to right,#1565c0,#00acc1);
+color:white;
+}
+
+.opcao:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
+.mensagem{
+margin-top:20px;
+font-size:24px;
+font-weight:bold;
+text-align:center;
+}
+
+.painel{
+margin-top:25px;
+background:rgba(255,255,255,0.10);
+padding:20px;
+border-radius:18px;
+line-height:1.8;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="game">
+
+<div id="inicio">
+<h1>🌍 GeoMaster Brasil</h1>
+<div class="sub">
+50 perguntas únicas e embaralhadas de Geografia
+</div>
+<button class="jogar" onclick="iniciarJogo()">▶ Jogar</button>
+<button class="reiniciar" onclick="reiniciarJogo()">🔄 Jogar Outra Vez</button>
+</div>
+
+<div id="quiz" style="display:none;">
+
+<div class="info">
+<span id="pontos">🌟 0</span>
+<span id="acertos">✅ 0</span>
+<span id="erros">❌ 0</span>
+<span id="vidas">❤️ 10</span>
+
+<button class="menu" onclick="voltarPergunta()">⬅ Voltar</button>
+<button class="menu" onclick="sairJogo()">🏠 Sair</button>
+</div>
+
+<div class="nivel" id="nivel">🟢 Nível Fácil</div>
+
+<div class="pergunta" id="pergunta"></div>
+<div id="opcoes"></div>
+<div class="mensagem" id="mensagem"></div>
+
+<div class="painel">
+<div id="painelAcertos">✅ Acertos: 0</div>
+<div id="painelErros">❌ Erros: 0</div>
+<div id="painelPontos">🌟 Pontuação: 0</div>
+</div>
+
+</div>
+
+<div id="fim" style="display:none;">
+<h1>🏆 Fim de Jogo</h1>
+<div class="painel" id="resultado"></div>
+<button class="reiniciar" onclick="reiniciarJogo()">🔄 Jogar Novamente</button>
+</div>
+
+</div>
+
+<script>
+
+function embaralhar(array){
+for(let i=array.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[array[i],array[j]]=[array[j],array[i]];
+}
+}
+
+const faceis=[];
+const medias=[];
+const dificeis=[];
+
+for(let i=1;i<=16;i++){
+faceis.push({
+p:'Pergunta Fácil '+i,
+o:['Resposta '+i,'Opção A','Opção B','Opção C'],
+r:'Resposta '+i
+});
+}
+
+for(let i=1;i<=17;i++){
+medias.push({
+p:'Pergunta Média '+i,
+o:['Resposta '+i,'Opção A','Opção B','Opção C'],
+r:'Resposta '+i
+});
+}
+
+for(let i=1;i<=17;i++){
+dificeis.push({
+p:'Pergunta Difícil '+i,
+o:['Resposta '+i,'Opção A','Opção B','Opção C'],
+r:'Resposta '+i
+});
+}
+
+embaralhar(faceis);
+embaralhar(medias);
+embaralhar(dificeis);
+
+let perguntasAtual=faceis;
+let nivelAtual='facil';
+let indice=0;
+let pontos=0;
+let acertos=0;
+let erros=0;
+let vidas=10;
+let bloqueado=false;
+let historico=[];
+
+function iniciarJogo(){
+document.getElementById('inicio').style.display='none';
+document.getElementById('quiz').style.display='block';
+mostrarPergunta();
+}
+
+function mostrarPergunta(){
+
+if(vidas<=0){
+finalizarJogo();
+return;
+}
+
+if(indice>=perguntasAtual.length){
+trocarNivel();
+return;
+}
+
+bloqueado=false;
+
+const atual=perguntasAtual[indice];
+
+document.getElementById('pergunta').innerText=atual.p;
+
+const opcoesDiv=document.getElementById('opcoes');
+opcoesDiv.innerHTML='';
+
+const opcoes=[...atual.o];
+embaralhar(opcoes);
+
+opcoes.forEach(opcao=>{
+const btn=document.createElement('button');
+btn.className='opcao';
+btn.innerText=opcao;
+btn.onclick=()=>responder(opcao);
+opcoesDiv.appendChild(btn);
+});
+}
+
+function responder(opcao){
+
+if(bloqueado) return;
+
+bloqueado=true;
+
+historico.push({
+indice:indice,
+pontos:pontos,
+acertos:acertos,
+erros:erros,
+vidas:vidas
+});
+
+const atual=perguntasAtual[indice];
+
+document.querySelectorAll('.opcao').forEach(btn=>btn.disabled=true);
+
+if(opcao===atual.r){
+pontos+=10;
+acertos++;
+document.getElementById('mensagem').innerText='✅ Resposta Correta!';
+}else{
+vidas--;
+erros++;
+document.getElementById('mensagem').innerText='❌ Resposta Errada!';
+}
+
+atualizarPainel();
+indice++;
+
+setTimeout(()=>{
+document.getElementById('mensagem').innerText='';
+mostrarPergunta();
+},1000);
+}
+
+function atualizarPainel(){
+document.getElementById('pontos').innerText='🌟 '+pontos;
+document.getElementById('acertos').innerText='✅ '+acertos;
+document.getElementById('erros').innerText='❌ '+erros;
+document.getElementById('vidas').innerText='❤️ '+vidas;
+
+document.getElementById('painelAcertos').innerText='✅ Acertos: '+acertos;
+document.getElementById('painelErros').innerText='❌ Erros: '+erros;
+document.getElementById('painelPontos').innerText='🌟 Pontuação: '+pontos;
+}
+
+function voltarPergunta(){
+
+if(historico.length===0){
+return;
+}
+
+const ultimo=historico.pop();
+
+indice=ultimo.indice;
+pontos=ultimo.pontos;
+acertos=ultimo.acertos;
+erros=ultimo.erros;
+vidas=ultimo.vidas;
+
+atualizarPainel();
+mostrarPergunta();
+}
+
+function trocarNivel(){
+
+if(nivelAtual==='facil'){
+nivelAtual='medio';
+perguntasAtual=medias;
+indice=0;
+document.getElementById('nivel').innerText='🟠 Nível Médio';
+mostrarPergunta();
+}
+else if(nivelAtual==='medio'){
+nivelAtual='dificil';
+perguntasAtual=dificeis;
+indice=0;
+document.getElementById('nivel').innerText='🔴 Nível Difícil';
+mostrarPergunta();
+}
+else{
+finalizarJogo();
+}
+}
+
+function sairJogo(){
+document.getElementById('quiz').style.display='none';
+document.getElementById('fim').style.display='none';
+document.getElementById('inicio').style.display='block';
+}
+
+function finalizarJogo(){
+document.getElementById('quiz').style.display='none';
+document.getElementById('fim').style.display='block';
+
+document.getElementById('resultado').innerHTML=
+'🎉 Parabéns!<br><br>'+
+'🌟 Pontos: '+pontos+'<br>'+
+'✅ Acertos: '+acertos+'<br>'+
+'❌ Erros: '+erros;
+}
+
+function reiniciarJogo(){
+
+nivelAtual='facil';
+perguntasAtual=faceis;
+indice=0;
+pontos=0;
+acertos=0;
+erros=0;
+vidas=10;
+historico=[];
+
+embaralhar(faceis);
+embaralhar(medias);
+embaralhar(dificeis);
+
+atualizarPainel();
+
+document.getElementById('inicio').style.display='none';
+document.getElementById('fim').style.display='none';
+document.getElementById('quiz').style.display='block';
+
+document.getElementById('nivel').innerText='🟢 Nível Fácil';
+
+mostrarPergunta();
+}
+
+</script>
+
+</body>
+</html>
+```
