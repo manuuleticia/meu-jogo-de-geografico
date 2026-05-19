@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>GeoMaster Brasil</title>
 
 <style>
@@ -17,7 +15,7 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#001848,#004aad,#00a2ff);
+background:linear-gradient(135deg,#001f4d,#0059b3,#00a2ff);
 min-height:100vh;
 display:flex;
 justify-content:center;
@@ -28,21 +26,20 @@ overflow:hidden;
 
 .game{
 width:100%;
-max-width:700px;
-background:rgba(255,255,255,0.12);
-backdrop-filter:blur(12px);
+max-width:850px;
+background:rgba(255,255,255,0.10);
+backdrop-filter:blur(15px);
 border-radius:30px;
 padding:30px;
-box-shadow:0 15px 40px rgba(0,0,0,0.4);
 color:white;
-border:2px solid rgba(255,255,255,0.2);
-animation:entrada .7s ease;
+box-shadow:0 15px 45px rgba(0,0,0,0.5);
+animation:entrada .6s ease;
 }
 
 @keyframes entrada{
 from{
 opacity:0;
-transform:translateY(30px);
+transform:translateY(40px);
 }
 to{
 opacity:1;
@@ -52,28 +49,20 @@ transform:translateY(0);
 
 h1{
 text-align:center;
-font-size:42px;
+font-size:45px;
 margin-bottom:20px;
 }
 
-.temas{
+.sub{
 text-align:center;
-font-size:18px;
-line-height:1.8;
-margin-top:20px;
-}
-
-.menu{
-display:flex;
-flex-direction:column;
-gap:15px;
-margin-top:25px;
+font-size:20px;
+margin-bottom:25px;
 }
 
 button{
-padding:16px;
 border:none;
-border-radius:16px;
+border-radius:18px;
+padding:15px;
 font-size:18px;
 font-weight:bold;
 cursor:pointer;
@@ -93,43 +82,44 @@ color:white;
 .menuBtn{
 background:#ff9800;
 color:white;
-}
-
-.sair{
-background:#d50000;
-color:white;
-}
-
-.reiniciar{
-background:#ffee58;
-color:black;
+width:auto;
+padding:10px 15px;
+font-size:15px;
 }
 
 .info{
 display:flex;
 justify-content:space-between;
+align-items:center;
 flex-wrap:wrap;
 gap:10px;
 margin-bottom:20px;
-font-size:18px;
 font-weight:bold;
+font-size:17px;
+}
+
+.nivel{
+text-align:center;
+font-size:24px;
+font-weight:bold;
+margin-bottom:20px;
 }
 
 .pergunta{
 background:rgba(255,255,255,0.15);
 padding:25px;
-border-radius:20px;
+border-radius:22px;
 font-size:24px;
 font-weight:bold;
 text-align:center;
 margin-bottom:20px;
-box-shadow:0 8px 20px rgba(0,0,0,0.2);
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 
 .opcao{
 background:linear-gradient(to right,#1565c0,#00bcd4);
 color:white;
-margin-top:10px;
+margin-top:12px;
 }
 
 .opcao:disabled{
@@ -139,15 +129,25 @@ cursor:not-allowed;
 
 .mensagem{
 margin-top:20px;
-text-align:center;
 font-size:24px;
 font-weight:bold;
+text-align:center;
 }
 
-#resultado{
+.painel{
+margin-top:25px;
+background:rgba(255,255,255,0.12);
+padding:20px;
+border-radius:18px;
 text-align:center;
-font-size:22px;
+font-size:18px;
+font-weight:bold;
 line-height:1.8;
+}
+
+.reiniciar{
+background:#ffee58;
+color:black;
 margin-top:20px;
 }
 
@@ -158,51 +158,44 @@ margin-top:20px;
 
 <div class="game">
 
-<!-- MENU -->
+<!-- CAPA -->
+
 <div id="inicio">
 
 <h1>🌍 GeoMaster Brasil</h1>
 
-<div class="temas">
-🌎 Países<br>
-🏛️ Capitais<br>
-🌦️ Clima<br>
-🗺️ Mapas<br>
-🌊 Oceanos<br>
-⛰️ Relevo
+<div class="sub">
+50 perguntas únicas e embaralhadas de Geografia
 </div>
-
-<div class="menu">
 
 <button class="jogar" onclick="iniciarJogo()">
 ▶ Jogar
 </button>
 
-<button class="menuBtn" onclick="mostrarMenu()">
-☰ Menu
-</button>
-
-<button class="sair" onclick="sairJogo()">
-✖ Sair
-</button>
-
-</div>
-
 </div>
 
 <!-- QUIZ -->
+
 <div id="quiz" style="display:none;">
 
 <div class="info">
 
-<span id="pontos">🌟 Pontos: 0</span>
+<span id="pontos">🌟 0</span>
 
-<span id="acertos">✅ Acertos: 0</span>
+<span id="acertos">✅ 0</span>
 
-<span id="erros">❌ Erros: 0</span>
+<span id="erros">❌ 0</span>
 
-<span id="vidas">❤️ Vidas: 10</span>
+<span id="vidas">❤️ 10</span>
 
+<button class="menuBtn" onclick="voltarCapa()">
+🏠 Sair
+</button>
+
+</div>
+
+<div class="nivel" id="nivel">
+🟢 Nível Fácil
 </div>
 
 <div class="pergunta" id="pergunta"></div>
@@ -211,26 +204,35 @@ margin-top:20px;
 
 <div class="mensagem" id="mensagem"></div>
 
+<div class="painel">
+
+<div id="painelAcertos">
+✅ Acertos: 0
+</div>
+
+<div id="painelErros">
+❌ Erros: 0
+</div>
+
+<div id="painelPontos">
+🌟 Pontuação: 0
+</div>
+
+</div>
+
 </div>
 
 <!-- FINAL -->
+
 <div id="fim" style="display:none;">
 
 <h1>🏆 Fim de Jogo</h1>
 
-<div id="resultado"></div>
-
-<div class="menu">
+<div class="painel" id="resultado"></div>
 
 <button class="reiniciar" onclick="reiniciarJogo()">
 🔄 Jogar Novamente
 </button>
-
-<button class="menuBtn" onclick="voltarInicio()">
-☰ Menu Principal
-</button>
-
-</div>
 
 </div>
 
@@ -238,210 +240,158 @@ margin-top:20px;
 
 <script>
 
-const perguntas = [
-
-{
-pergunta:"Qual é a capital do Brasil?",
-opcoes:["Brasília","Rio de Janeiro","São Paulo","Salvador"],
-resposta:"Brasília"
-},
-
-{
-pergunta:"Qual país possui a Torre Eiffel?",
-opcoes:["França","Itália","Portugal","Canadá"],
-resposta:"França"
-},
-
-{
-pergunta:"Qual é o maior oceano do mundo?",
-opcoes:["Pacífico","Atlântico","Índico","Ártico"],
-resposta:"Pacífico"
-},
-
-{
-pergunta:"Qual clima predomina na Amazônia?",
-opcoes:["Equatorial","Polar","Desértico","Temperado"],
-resposta:"Equatorial"
-},
-
-{
-pergunta:"Qual continente fica o Egito?",
-opcoes:["África","Europa","Ásia","Oceania"],
-resposta:"África"
-},
-
-{
-pergunta:"Qual é a capital do Japão?",
-opcoes:["Tóquio","Pequim","Seul","Bangkok"],
-resposta:"Tóquio"
-},
-
-{
-pergunta:"Qual linha imaginária divide a Terra em norte e sul?",
-opcoes:["Linha do Equador","Greenwich","Capricórnio","Câncer"],
-resposta:"Linha do Equador"
-},
-
-{
-pergunta:"Qual país abriga Machu Picchu?",
-opcoes:["Peru","Chile","México","Brasil"],
-resposta:"Peru"
-},
-
-{
-pergunta:"Qual relevo possui grandes elevações?",
-opcoes:["Montanha","Vale","Planície","Depressão"],
-resposta:"Montanha"
-},
-
-{
-pergunta:"Qual é o maior continente do mundo?",
-opcoes:["Ásia","África","Europa","América"],
-resposta:"Ásia"
-},
-
-{
-pergunta:"Qual é a capital da Argentina?",
-opcoes:["Buenos Aires","Lima","Bogotá","Santiago"],
-resposta:"Buenos Aires"
-},
-
-{
-pergunta:"Qual deserto fica na África?",
-opcoes:["Saara","Atacama","Gobi","Mojave"],
-resposta:"Saara"
-},
-
-{
-pergunta:"Qual país possui formato de bota?",
-opcoes:["Itália","Chile","México","Peru"],
-resposta:"Itália"
-},
-
-{
-pergunta:"Qual continente fica o Canadá?",
-opcoes:["América do Norte","Europa","Ásia","África"],
-resposta:"América do Norte"
-},
-
-{
-pergunta:"Qual é a capital da França?",
-opcoes:["Paris","Roma","Madri","Lisboa"],
-resposta:"Paris"
-},
-
-{
-pergunta:"Qual oceano banha o Brasil?",
-opcoes:["Atlântico","Pacífico","Índico","Ártico"],
-resposta:"Atlântico"
-},
-
-{
-pergunta:"Qual clima possui pouca chuva?",
-opcoes:["Semiárido","Equatorial","Temperado","Polar"],
-resposta:"Semiárido"
-},
-
-{
-pergunta:"Qual é o maior país do mundo?",
-opcoes:["Rússia","China","Canadá","Brasil"],
-resposta:"Rússia"
-},
-
-{
-pergunta:"Qual cordilheira fica na América do Sul?",
-opcoes:["Andes","Alpes","Himalaia","Rochosas"],
-resposta:"Andes"
-},
-
-{
-pergunta:"Qual é a capital da Alemanha?",
-opcoes:["Berlim","Praga","Viena","Zurique"],
-resposta:"Berlim"
-}
-
-];
+/* ---------------- EMBARALHAR ---------------- */
 
 function embaralhar(lista){
 
-for(let i = lista.length - 1; i > 0; i--){
+for(let i=lista.length-1;i>0;i--){
 
-const j = Math.floor(Math.random() * (i + 1));
+const j=Math.floor(Math.random()*(i+1));
 
-[lista[i], lista[j]] = [lista[j], lista[i]];
-
-}
+[lista[i],lista[j]]=[lista[j],lista[i]];
 
 }
 
-embaralhar(perguntas);
+}
 
-let indice = 0;
-let pontos = 0;
-let vidas = 10;
-let acertos = 0;
-let erros = 0;
-let bloqueado = false;
+/* ---------------- PERGUNTAS ---------------- */
 
-/* MUSICA */
+const faceis = [
 
-const musica = new Audio(
-"https://actions.google.com/sounds/v1/ambiences/bird_forest_ambience.ogg"
-);
+{p:"Qual é a capital do Brasil?",o:["Brasília","Rio","São Paulo","Salvador"],r:"Brasília"},
+{p:"Qual país possui a Torre Eiffel?",o:["França","Itália","Portugal","Canadá"],r:"França"},
+{p:"Qual é o maior oceano?",o:["Pacífico","Atlântico","Índico","Ártico"],r:"Pacífico"},
+{p:"Qual continente fica o Brasil?",o:["América do Sul","Europa","Ásia","África"],r:"América do Sul"},
+{p:"Qual é a capital da França?",o:["Paris","Roma","Madri","Lisboa"],r:"Paris"},
+{p:"Qual país possui a Muralha da China?",o:["China","Japão","Índia","Coreia"],r:"China"},
+{p:"Qual oceano banha o Brasil?",o:["Atlântico","Pacífico","Ártico","Índico"],r:"Atlântico"},
+{p:"Qual país é conhecido pelo tango?",o:["Argentina","Brasil","Chile","Uruguai"],r:"Argentina"},
+{p:"Qual linha divide norte e sul?",o:["Equador","Greenwich","Capricórnio","Câncer"],r:"Equador"},
+{p:"Qual é a capital do Japão?",o:["Tóquio","Pequim","Seul","Bangkok"],r:"Tóquio"},
+{p:"Qual clima predomina na Amazônia?",o:["Equatorial","Polar","Desértico","Temperado"],r:"Equatorial"},
+{p:"Qual continente fica o Egito?",o:["África","Europa","Ásia","Oceania"],r:"África"},
+{p:"Qual é o maior continente?",o:["Ásia","Europa","África","Oceania"],r:"Ásia"},
+{p:"Qual relevo possui grandes elevações?",o:["Montanha","Vale","Planície","Depressão"],r:"Montanha"},
+{p:"Qual país possui formato de bota?",o:["Itália","Chile","Peru","México"],r:"Itália"},
+{p:"Qual é a capital da Argentina?",o:["Buenos Aires","Lima","Bogotá","Santiago"],r:"Buenos Aires"}
 
-musica.loop = true;
-musica.volume = 0.2;
+];
 
-/* INICIAR */
+const medias = [
+
+{p:"Qual cordilheira fica na América do Sul?",o:["Andes","Alpes","Himalaia","Rochosas"],r:"Andes"},
+{p:"Qual é o maior rio do mundo em volume?",o:["Amazonas","Nilo","Yangtzé","Mississipi"],r:"Amazonas"},
+{p:"Qual é a capital da Alemanha?",o:["Berlim","Praga","Viena","Zurique"],r:"Berlim"},
+{p:"Qual clima possui pouca chuva?",o:["Semiárido","Polar","Equatorial","Temperado"],r:"Semiárido"},
+{p:"Qual rio passa pelo Egito?",o:["Nilo","Amazonas","Danúbio","Yangtzé"],r:"Nilo"},
+{p:"Qual deserto fica na África?",o:["Saara","Atacama","Gobi","Mojave"],r:"Saara"},
+{p:"Qual país abriga Machu Picchu?",o:["Peru","Chile","México","Brasil"],r:"Peru"},
+{p:"Qual é a capital da Itália?",o:["Roma","Milão","Turim","Nápoles"],r:"Roma"},
+{p:"Qual linha divide leste e oeste?",o:["Greenwich","Equador","Capricórnio","Câncer"],r:"Greenwich"},
+{p:"Qual relevo é plano?",o:["Planície","Montanha","Vale","Cordilheira"],r:"Planície"},
+{p:"Qual país possui mais população?",o:["Índia","Brasil","Canadá","México"],r:"Índia"},
+{p:"Qual é a capital de Portugal?",o:["Lisboa","Porto","Faro","Coimbra"],r:"Lisboa"},
+{p:"Qual clima possui temperaturas muito baixas?",o:["Polar","Tropical","Equatorial","Semiárido"],r:"Polar"},
+{p:"Qual oceano fica entre América e Europa?",o:["Atlântico","Pacífico","Índico","Ártico"],r:"Atlântico"},
+{p:"Qual mapa mostra divisões políticas?",o:["Mapa político","Mapa físico","Mapa climático","Mapa econômico"],r:"Mapa político"},
+{p:"Qual é o menor continente?",o:["Oceania","Europa","África","América"],r:"Oceania"},
+{p:"Qual é a capital da Rússia?",o:["Moscou","Kiev","Minsk","Varsóvia"],r:"Moscou"}
+
+];
+
+const dificeis = [
+
+{p:"Qual deserto é o mais seco do mundo?",o:["Atacama","Saara","Gobi","Kalahari"],r:"Atacama"},
+{p:"Qual é a capital da Mongólia?",o:["Ulan Bator","Astana","Tashkent","Pequim"],r:"Ulan Bator"},
+{p:"Qual estreito separa Europa da África?",o:["Gibraltar","Bering","Ormuz","Magalhães"],r:"Gibraltar"},
+{p:"Qual é a montanha mais alta do mundo?",o:["Everest","K2","Aconcágua","Monte Branco"],r:"Everest"},
+{p:"Qual é a capital da Islândia?",o:["Reykjavik","Oslo","Helsinque","Copenhague"],r:"Reykjavik"},
+{p:"Qual país possui mais fusos horários?",o:["França","Rússia","Estados Unidos","China"],r:"França"},
+{p:"Qual é o oceano mais frio?",o:["Ártico","Pacífico","Atlântico","Índico"],r:"Ártico"},
+{p:"Qual relevo é uma área rebaixada?",o:["Depressão","Planalto","Montanha","Vale"],r:"Depressão"},
+{p:"Qual é a capital da Nova Zelândia?",o:["Wellington","Auckland","Sydney","Canberra"],r:"Wellington"},
+{p:"Qual país possui maior território?",o:["Rússia","Canadá","China","Brasil"],r:"Rússia"},
+{p:"Qual corrente marítima aquece a Europa?",o:["Corrente do Golfo","Humboldt","El Niño","La Niña"],r:"Corrente do Golfo"},
+{p:"Qual continente possui mais países?",o:["África","Europa","Ásia","América"],r:"África"},
+{p:"Qual é a capital do Cazaquistão?",o:["Astana","Moscou","Kiev","Tbilisi"],r:"Astana"},
+{p:"Qual clima é típico de desertos?",o:["Desértico","Polar","Temperado","Equatorial"],r:"Desértico"},
+{p:"Qual relevo é elevado e relativamente plano?",o:["Planalto","Vale","Montanha","Depressão"],r:"Planalto"},
+{p:"Qual oceano banha a Índia?",o:["Índico","Pacífico","Atlântico","Ártico"],r:"Índico"},
+{p:"Qual país é chamado Terra do Sol Nascente?",o:["Japão","China","Índia","Tailândia"],r:"Japão"}
+
+];
+
+embaralhar(faceis);
+embaralhar(medias);
+embaralhar(dificeis);
+
+/* ---------------- VARIÁVEIS ---------------- */
+
+let perguntasAtual=faceis;
+let nivelAtual="facil";
+
+let indice=0;
+let pontos=0;
+let acertos=0;
+let erros=0;
+let vidas=10;
+
+let bloqueado=false;
+
+/* ---------------- INICIAR ---------------- */
 
 function iniciarJogo(){
 
-document.getElementById("inicio").style.display = "none";
+document.getElementById("inicio").style.display="none";
 
-document.getElementById("quiz").style.display = "block";
-
-musica.play();
+document.getElementById("quiz").style.display="block";
 
 mostrarPergunta();
 
 }
 
-/* MOSTRAR */
+/* ---------------- MOSTRAR ---------------- */
 
 function mostrarPergunta(){
 
-if(indice >= perguntas.length || vidas <= 0){
+if(vidas<=0){
 
 finalizarJogo();
-
 return;
 
 }
 
-bloqueado = false;
+if(indice>=perguntasAtual.length){
 
-const atual = perguntas[indice];
+trocarNivel();
+return;
 
-document.getElementById("pergunta").innerText =
-atual.pergunta;
+}
 
-const opcoesDiv = document.getElementById("opcoes");
+bloqueado=false;
 
-opcoesDiv.innerHTML = "";
+const atual=perguntasAtual[indice];
 
-const opcoes = [...atual.opcoes];
+document.getElementById("pergunta").innerText=
+atual.p;
+
+const opcoesDiv=document.getElementById("opcoes");
+
+opcoesDiv.innerHTML="";
+
+const opcoes=[...atual.o];
 
 embaralhar(opcoes);
 
-opcoes.forEach(opcao => {
+opcoes.forEach(opcao=>{
 
-const btn = document.createElement("button");
+const btn=document.createElement("button");
 
-btn.className = "opcao";
+btn.className="opcao";
 
-btn.innerText = opcao;
+btn.innerText=opcao;
 
-btn.onclick = () => responder(opcao);
+btn.onclick=()=>responder(opcao);
 
 opcoesDiv.appendChild(btn);
 
@@ -449,57 +399,44 @@ opcoesDiv.appendChild(btn);
 
 }
 
-/* RESPONDER */
+/* ---------------- RESPONDER ---------------- */
 
 function responder(opcao){
 
 if(bloqueado) return;
 
-bloqueado = true;
+bloqueado=true;
 
-const atual = perguntas[indice];
+document.querySelectorAll(".opcao")
+.forEach(btn=>btn.disabled=true);
 
-const botoes = document.querySelectorAll(".opcao");
+const atual=perguntasAtual[indice];
 
-botoes.forEach(btn => btn.disabled = true);
+if(opcao===atual.r){
 
-if(opcao === atual.resposta){
-
-pontos += 10;
-
+pontos+=10;
 acertos++;
 
-document.getElementById("mensagem").innerText =
+document.getElementById("mensagem").innerText=
 "✅ Resposta Correta!";
 
 }else{
 
 vidas--;
-
 erros++;
 
-document.getElementById("mensagem").innerText =
+document.getElementById("mensagem").innerText=
 "❌ Resposta Errada!";
 
 }
 
-document.getElementById("pontos").innerText =
-"🌟 Pontos: " + pontos;
-
-document.getElementById("acertos").innerText =
-"✅ Acertos: " + acertos;
-
-document.getElementById("erros").innerText =
-"❌ Erros: " + erros;
-
-document.getElementById("vidas").innerText =
-"❤️ Vidas: " + vidas;
+atualizarPainel();
 
 indice++;
 
-setTimeout(() => {
+setTimeout(()=>{
 
-document.getElementById("mensagem").innerText = "";
+document.getElementById("mensagem").innerText="";
 
 mostrarPergunta();
 
@@ -507,88 +444,138 @@ mostrarPergunta();
 
 }
 
-/* FINAL */
+/* ---------------- PAINEL ---------------- */
 
-function finalizarJogo(){
+function atualizarPainel(){
 
-document.getElementById("quiz").style.display = "none";
+document.getElementById("pontos").innerText=
+"🌟 "+pontos;
 
-document.getElementById("fim").style.display = "block";
+document.getElementById("acertos").innerText=
+"✅ "+acertos;
 
-document.getElementById("resultado").innerHTML =
+document.getElementById("erros").innerText=
+"❌ "+erros;
 
-"🎉 Parabéns por jogar GeoMaster Brasil!<br><br>" +
+document.getElementById("vidas").innerText=
+"❤️ "+vidas;
 
-"🌟 Pontuação: " + pontos + "<br>" +
+document.getElementById("painelAcertos").innerText=
+"✅ Acertos: "+acertos;
 
-"✅ Acertos: " + acertos + "<br>" +
+document.getElementById("painelErros").innerText=
+"❌ Erros: "+erros;
 
-"❌ Erros: " + erros;
+document.getElementById("painelPontos").innerText=
+"🌟 Pontuação: "+pontos;
 
 }
 
-/* REINICIAR */
+/* ---------------- TROCAR NÍVEL ---------------- */
 
-function reiniciarJogo(){
+function trocarNivel(){
 
-indice = 0;
-pontos = 0;
-vidas = 10;
-acertos = 0;
-erros = 0;
+if(nivelAtual==="facil"){
 
-embaralhar(perguntas);
+nivelAtual="medio";
 
-document.getElementById("fim").style.display = "none";
+perguntasAtual=medias;
 
-document.getElementById("quiz").style.display = "block";
+indice=0;
 
-document.getElementById("pontos").innerText =
-"🌟 Pontos: 0";
+document.getElementById("nivel").innerText=
+"🟠 Nível Médio";
 
-document.getElementById("acertos").innerText =
-"✅ Acertos: 0";
-
-document.getElementById("erros").innerText =
-"❌ Erros: 0";
-
-document.getElementById("vidas").innerText =
-"❤️ Vidas: 10";
+alert("🎉 Você passou para o nível MÉDIO!");
 
 mostrarPergunta();
 
 }
 
-/* MENU */
+else if(nivelAtual==="medio"){
 
-function mostrarMenu(){
+nivelAtual="dificil";
 
-alert(
-"🌍 GeoMaster Brasil\n\n" +
-"• Perguntas embaralhadas\n" +
-"• Sem repetição\n" +
-"• Sistema de vidas\n" +
-"• Pontuação\n" +
-"• Música de fundo"
-);
+perguntasAtual=dificeis;
 
-}
+indice=0;
 
-/* VOLTAR */
+document.getElementById("nivel").innerText=
+"🔴 Nível Difícil";
 
-function voltarInicio(){
+alert("🔥 Você passou para o nível DIFÍCIL!");
 
-document.getElementById("fim").style.display = "none";
-
-document.getElementById("inicio").style.display = "block";
+mostrarPergunta();
 
 }
 
-/* SAIR */
+else{
 
-function sairJogo(){
+finalizarJogo();
 
-window.close();
+}
+
+}
+
+/* ---------------- SAIR ---------------- */
+
+function voltarCapa(){
+
+document.getElementById("quiz").style.display="none";
+
+document.getElementById("inicio").style.display="block";
+
+}
+
+/* ---------------- FINAL ---------------- */
+
+function finalizarJogo(){
+
+document.getElementById("quiz").style.display="none";
+
+document.getElementById("fim").style.display="block";
+
+document.getElementById("resultado").innerHTML=
+
+"🎉 Parabéns!<br><br>"+
+"🌟 Pontos: "+pontos+"<br>"+
+"✅ Acertos: "+acertos+"<br>"+
+"❌ Erros: "+erros;
+
+}
+
+/* ---------------- REINICIAR ---------------- */
+
+function reiniciarJogo(){
+
+nivelAtual="facil";
+
+perguntasAtual=faceis;
+
+indice=0;
+
+pontos=0;
+
+acertos=0;
+
+erros=0;
+
+vidas=10;
+
+embaralhar(faceis);
+embaralhar(medias);
+embaralhar(dificeis);
+
+document.getElementById("fim").style.display="none";
+
+document.getElementById("quiz").style.display="block";
+
+document.getElementById("nivel").innerText=
+"🟢 Nível Fácil";
+
+atualizarPainel();
+
+mostrarPergunta();
 
 }
 
