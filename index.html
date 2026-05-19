@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GeoMaster Brasil</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#001848,#004aad,#00a2ff);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+overflow:hidden;
+}
+
+.game{
+width:100%;
+max-width:700px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(12px);
+border-radius:30px;
+padding:30px;
+box-shadow:0 15px 40px rgba(0,0,0,0.4);
+color:white;
+border:2px solid rgba(255,255,255,0.2);
+animation:entrada .7s ease;
+}
+
+@keyframes entrada{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+h1{
+text-align:center;
+font-size:42px;
+margin-bottom:20px;
+}
+
+.temas{
+text-align:center;
+font-size:18px;
+line-height:1.8;
+margin-top:20px;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:15px;
+margin-top:25px;
+}
+
+button{
+padding:16px;
+border:none;
+border-radius:16px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+width:100%;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.jogar{
+background:#00c853;
+color:white;
+}
+
+.menuBtn{
+background:#ff9800;
+color:white;
+}
+
+.sair{
+background:#d50000;
+color:white;
+}
+
+.reiniciar{
+background:#ffee58;
+color:black;
+}
+
+.info{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:20px;
+font-size:18px;
+font-weight:bold;
+}
+
+.pergunta{
+background:rgba(255,255,255,0.15);
+padding:25px;
+border-radius:20px;
+font-size:24px;
+font-weight:bold;
+text-align:center;
+margin-bottom:20px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+.opcao{
+background:linear-gradient(to right,#1565c0,#00bcd4);
+color:white;
+margin-top:10px;
+}
+
+.opcao:disabled{
+opacity:0.6;
+cursor:not-allowed;
+}
+
+.mensagem{
+margin-top:20px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+}
+
+#resultado{
+text-align:center;
+font-size:22px;
+line-height:1.8;
+margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+<!-- MENU -->
+<div id="inicio">
+
+<h1>🌍 GeoMaster Brasil</h1>
+
+<div class="temas">
+🌎 Países<br>
+🏛️ Capitais<br>
+🌦️ Clima<br>
+🗺️ Mapas<br>
+🌊 Oceanos<br>
+⛰️ Relevo
+</div>
+
+<div class="menu">
+
+<button class="jogar" onclick="iniciarJogo()">
+▶ Jogar
+</button>
+
+<button class="menuBtn" onclick="mostrarMenu()">
+☰ Menu
+</button>
+
+<button class="sair" onclick="sairJogo()">
+✖ Sair
+</button>
+
+</div>
+
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" style="display:none;">
+
+<div class="info">
+
+<span id="pontos">🌟 Pontos: 0</span>
+
+<span id="acertos">✅ Acertos: 0</span>
+
+<span id="erros">❌ Erros: 0</span>
+
+<span id="vidas">❤️ Vidas: 10</span>
+
+</div>
+
+<div class="pergunta" id="pergunta"></div>
+
+<div id="opcoes"></div>
+
+<div class="mensagem" id="mensagem"></div>
+
+</div>
+
+<!-- FINAL -->
+<div id="fim" style="display:none;">
+
+<h1>🏆 Fim de Jogo</h1>
+
+<div id="resultado"></div>
+
+<div class="menu">
+
+<button class="reiniciar" onclick="reiniciarJogo()">
+🔄 Jogar Novamente
+</button>
+
+<button class="menuBtn" onclick="voltarInicio()">
+☰ Menu Principal
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const perguntas = [
+
+{
+pergunta:"Qual é a capital do Brasil?",
+opcoes:["Brasília","Rio de Janeiro","São Paulo","Salvador"],
+resposta:"Brasília"
+},
+
+{
+pergunta:"Qual país possui a Torre Eiffel?",
+opcoes:["França","Itália","Portugal","Canadá"],
+resposta:"França"
+},
+
+{
+pergunta:"Qual é o maior oceano do mundo?",
+opcoes:["Pacífico","Atlântico","Índico","Ártico"],
+resposta:"Pacífico"
+},
+
+{
+pergunta:"Qual clima predomina na Amazônia?",
+opcoes:["Equatorial","Polar","Desértico","Temperado"],
+resposta:"Equatorial"
+},
+
+{
+pergunta:"Qual continente fica o Egito?",
+opcoes:["África","Europa","Ásia","Oceania"],
+resposta:"África"
+},
+
+{
+pergunta:"Qual é a capital do Japão?",
+opcoes:["Tóquio","Pequim","Seul","Bangkok"],
+resposta:"Tóquio"
+},
+
+{
+pergunta:"Qual linha imaginária divide a Terra em norte e sul?",
+opcoes:["Linha do Equador","Greenwich","Capricórnio","Câncer"],
+resposta:"Linha do Equador"
+},
+
+{
+pergunta:"Qual país abriga Machu Picchu?",
+opcoes:["Peru","Chile","México","Brasil"],
+resposta:"Peru"
+},
+
+{
+pergunta:"Qual relevo possui grandes elevações?",
+opcoes:["Montanha","Vale","Planície","Depressão"],
+resposta:"Montanha"
+},
+
+{
+pergunta:"Qual é o maior continente do mundo?",
+opcoes:["Ásia","África","Europa","América"],
+resposta:"Ásia"
+},
+
+{
+pergunta:"Qual é a capital da Argentina?",
+opcoes:["Buenos Aires","Lima","Bogotá","Santiago"],
+resposta:"Buenos Aires"
+},
+
+{
+pergunta:"Qual deserto fica na África?",
+opcoes:["Saara","Atacama","Gobi","Mojave"],
+resposta:"Saara"
+},
+
+{
+pergunta:"Qual país possui formato de bota?",
+opcoes:["Itália","Chile","México","Peru"],
+resposta:"Itália"
+},
+
+{
+pergunta:"Qual continente fica o Canadá?",
+opcoes:["América do Norte","Europa","Ásia","África"],
+resposta:"América do Norte"
+},
+
+{
+pergunta:"Qual é a capital da França?",
+opcoes:["Paris","Roma","Madri","Lisboa"],
+resposta:"Paris"
+},
+
+{
+pergunta:"Qual oceano banha o Brasil?",
+opcoes:["Atlântico","Pacífico","Índico","Ártico"],
+resposta:"Atlântico"
+},
+
+{
+pergunta:"Qual clima possui pouca chuva?",
+opcoes:["Semiárido","Equatorial","Temperado","Polar"],
+resposta:"Semiárido"
+},
+
+{
+pergunta:"Qual é o maior país do mundo?",
+opcoes:["Rússia","China","Canadá","Brasil"],
+resposta:"Rússia"
+},
+
+{
+pergunta:"Qual cordilheira fica na América do Sul?",
+opcoes:["Andes","Alpes","Himalaia","Rochosas"],
+resposta:"Andes"
+},
+
+{
+pergunta:"Qual é a capital da Alemanha?",
+opcoes:["Berlim","Praga","Viena","Zurique"],
+resposta:"Berlim"
+}
+
+];
+
+function embaralhar(lista){
+
+for(let i = lista.length - 1; i > 0; i--){
+
+const j = Math.floor(Math.random() * (i + 1));
+
+[lista[i], lista[j]] = [lista[j], lista[i]];
+
+}
+
+}
+
+embaralhar(perguntas);
+
+let indice = 0;
+let pontos = 0;
+let vidas = 10;
+let acertos = 0;
+let erros = 0;
+let bloqueado = false;
+
+/* MUSICA */
+
+const musica = new Audio(
+"https://actions.google.com/sounds/v1/ambiences/bird_forest_ambience.ogg"
+);
+
+musica.loop = true;
+musica.volume = 0.2;
+
+/* INICIAR */
+
+function iniciarJogo(){
+
+document.getElementById("inicio").style.display = "none";
+
+document.getElementById("quiz").style.display = "block";
+
+musica.play();
+
+mostrarPergunta();
+
+}
+
+/* MOSTRAR */
+
+function mostrarPergunta(){
+
+if(indice >= perguntas.length || vidas <= 0){
+
+finalizarJogo();
+
+return;
+
+}
+
+bloqueado = false;
+
+const atual = perguntas[indice];
+
+document.getElementById("pergunta").innerText =
+atual.pergunta;
+
+const opcoesDiv = document.getElementById("opcoes");
+
+opcoesDiv.innerHTML = "";
+
+const opcoes = [...atual.opcoes];
+
+embaralhar(opcoes);
+
+opcoes.forEach(opcao => {
+
+const btn = document.createElement("button");
+
+btn.className = "opcao";
+
+btn.innerText = opcao;
+
+btn.onclick = () => responder(opcao);
+
+opcoesDiv.appendChild(btn);
+
+});
+
+}
+
+/* RESPONDER */
+
+function responder(opcao){
+
+if(bloqueado) return;
+
+bloqueado = true;
+
+const atual = perguntas[indice];
+
+const botoes = document.querySelectorAll(".opcao");
+
+botoes.forEach(btn => btn.disabled = true);
+
+if(opcao === atual.resposta){
+
+pontos += 10;
+
+acertos++;
+
+document.getElementById("mensagem").innerText =
+"✅ Resposta Correta!";
+
+}else{
+
+vidas--;
+
+erros++;
+
+document.getElementById("mensagem").innerText =
+"❌ Resposta Errada!";
+
+}
+
+document.getElementById("pontos").innerText =
+"🌟 Pontos: " + pontos;
+
+document.getElementById("acertos").innerText =
+"✅ Acertos: " + acertos;
+
+document.getElementById("erros").innerText =
+"❌ Erros: " + erros;
+
+document.getElementById("vidas").innerText =
+"❤️ Vidas: " + vidas;
+
+indice++;
+
+setTimeout(() => {
+
+document.getElementById("mensagem").innerText = "";
+
+mostrarPergunta();
+
+},1200);
+
+}
+
+/* FINAL */
+
+function finalizarJogo(){
+
+document.getElementById("quiz").style.display = "none";
+
+document.getElementById("fim").style.display = "block";
+
+document.getElementById("resultado").innerHTML =
+
+"🎉 Parabéns por jogar GeoMaster Brasil!<br><br>" +
+
+"🌟 Pontuação: " + pontos + "<br>" +
+
+"✅ Acertos: " + acertos + "<br>" +
+
+"❌ Erros: " + erros;
+
+}
+
+/* REINICIAR */
+
+function reiniciarJogo(){
+
+indice = 0;
+pontos = 0;
+vidas = 10;
+acertos = 0;
+erros = 0;
+
+embaralhar(perguntas);
+
+document.getElementById("fim").style.display = "none";
+
+document.getElementById("quiz").style.display = "block";
+
+document.getElementById("pontos").innerText =
+"🌟 Pontos: 0";
+
+document.getElementById("acertos").innerText =
+"✅ Acertos: 0";
+
+document.getElementById("erros").innerText =
+"❌ Erros: 0";
+
+document.getElementById("vidas").innerText =
+"❤️ Vidas: 10";
+
+mostrarPergunta();
+
+}
+
+/* MENU */
+
+function mostrarMenu(){
+
+alert(
+"🌍 GeoMaster Brasil\n\n" +
+"• Perguntas embaralhadas\n" +
+"• Sem repetição\n" +
+"• Sistema de vidas\n" +
+"• Pontuação\n" +
+"• Música de fundo"
+);
+
+}
+
+/* VOLTAR */
+
+function voltarInicio(){
+
+document.getElementById("fim").style.display = "none";
+
+document.getElementById("inicio").style.display = "block";
+
+}
+
+/* SAIR */
+
+function sairJogo(){
+
+window.close();
+
+}
+
+</script>
+
+</body>
+</html>
